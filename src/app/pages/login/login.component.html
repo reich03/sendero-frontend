@@ -1,0 +1,111 @@
+<!-- src/app/pages/login/login.component.html -->
+<section class="flex min-h-screen bg-gray-100">
+  <div class="relative hidden lg:block lg:w-3/5">
+    <img src="../../../assets/imgLogin.webp" alt="Universidad de los Llanos" class="object-cover w-full h-full">
+    <div class="absolute bottom-0 left-0 w-full p-6 text-white bg-gradient-to-t from-black/70 to-transparent">
+      <h2 class="text-3xl font-bold">Sendero Ecológico</h2>
+      <p class="text-lg">Universidad de los Llanos</p>
+    </div>
+  </div>
+  <div class="flex items-center justify-center w-full p-3 lg:w-2/5 lg:p-6">
+    <div class="w-full max-w-md p-5 bg-white rounded-lg shadow-lg lg:p-6">
+      <!-- Logo más pequeño -->
+      <div class="flex justify-center mb-3">
+        <img src="../../../assets/Logo Unillanos-Horizontal.png" alt="Logo Universidad de los Llanos" class="h-14">
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <h3 class="mb-1 text-xl font-bold text-center text-red-600">SENDERO ECOLÓGICO</h3>
+        <p class="mb-4 text-sm text-center text-gray-600">Iniciar sesión en su cuenta</p>
+
+        <div class="p-2 mb-3 text-sm border-l-4 border-red-600 rounded bg-red-50" *ngIf="errorMessage">
+          <p class="text-red-800">{{ errorMessage }}</p>
+        </div>
+
+        <div class="mb-3">
+          <label for="username" class="block mb-1 text-sm font-medium text-gray-700">Nombre de usuario:</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <i class="text-gray-400 fas fa-user"></i>
+            </div>
+            <input
+              type="text"
+              id="username"
+              formControlName="username"
+              placeholder="Ingrese su nombre de usuario"
+              class="w-full p-2 pl-10 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              [ngClass]="{'border-red-500 bg-red-50': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}"
+            >
+          </div>
+          <div class="mt-1 text-xs text-red-500" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+            <span *ngIf="loginForm.get('username')?.errors?.['required']">El nombre de usuario es obligatorio</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between mb-1">
+            <label for="password" class="block text-sm font-medium text-gray-700">Contraseña:</label>
+            <a href="#" class="text-xs text-red-600 hover:underline">¿Olvidaste tu contraseña?</a>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <i class="text-gray-400 fas fa-lock"></i>
+            </div>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              placeholder="********"
+              class="w-full p-2 pl-10 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              [ngClass]="{'border-red-500 bg-red-50': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+            >
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none"
+            >
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div class="mt-1 text-xs text-red-500" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-2 text-sm font-medium text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-70 disabled:cursor-not-allowed"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          <span class="flex items-center justify-center">
+            <i class="mr-2 fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+          </span>
+        </button>
+
+        <div class="relative flex items-center py-3 mt-3">
+          <div class="flex-grow border-t border-gray-300"></div>
+          <span class="flex-shrink mx-3 text-xs text-gray-500">O</span>
+          <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <div class="text-center">
+          <span class="block mb-2 text-xs text-gray-600">¿No tienes cuenta?</span>
+          <button
+            type="button"
+            class="w-full py-2 text-sm font-medium text-red-600 transition bg-transparent border border-red-600 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+            (click)="navigateToRegister()"
+          >
+            Crear una cuenta
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-4 text-xs text-center text-gray-500">
+        <p>© Universidad de los Llanos {{ currentYear }}</p>
+        <p>Sendero Ecológico - Todos los derechos reservados</p>
+      </div>
+    </div>
+  </div>
+</section>

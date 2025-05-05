@@ -1,0 +1,172 @@
+<!-- src/app/pages/register/register.component.html -->
+<section class="min-h-screen bg-gray-100 flex">
+  <div class="hidden lg:block lg:w-3/5 relative">
+    <img src="../../../assets/imgLogin.webp" alt="Universidad de los Llanos" class="w-full h-full object-cover">
+    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
+      <h2 class="text-3xl font-bold">Sendero Ecológico</h2>
+      <p class="text-lg">Universidad de los Llanos</p>
+    </div>
+  </div>
+  <div class="w-full lg:w-2/5 flex items-center justify-center p-3 lg:p-6">
+    <div class="bg-white p-5 lg:p-6 rounded-lg shadow-lg w-full max-w-md">
+      <!-- Logo más pequeño -->
+      <div class="flex justify-center mb-3">
+        <img src="../../../assets/Logo Unillanos-Horizontal.png" alt="Logo Universidad de los Llanos" class="h-14">
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <h3 class="text-xl font-bold text-center text-red-600 mb-1">SENDERO ECOLÓGICO</h3>
+        <p class="text-gray-600 text-sm text-center mb-4">Registro de nueva cuenta</p>
+
+        <div class="bg-red-50 border-l-4 border-red-600 p-2 rounded mb-3 text-sm" *ngIf="errorMessage">
+          <p class="text-red-800">{{ errorMessage }}</p>
+        </div>
+
+        <div class="mb-3 form-field">
+          <label for="username" class="block text-gray-700 text-sm font-medium mb-1">Usuario:</label>
+          <div class="relative input-container">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-user text-gray-400"></i>
+            </div>
+            <input
+              type="text"
+              id="username"
+              formControlName="username"
+              placeholder="Nombre de usuario"
+              class="w-full pl-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm transition-all duration-200"
+              [ngClass]="{'border-red-500 bg-red-50': registerForm.get('username')?.invalid && registerForm.get('username')?.touched, 'border-green-500': registerForm.get('username')?.valid && registerForm.get('username')?.touched}"
+              (focus)="onInputFocus('username')"
+              (blur)="onInputBlur('username')"
+            >
+            <div class="transform scale-0 origin-left transition-transform duration-200 absolute right-3 top-1/2 -translate-y-1/2" [ngClass]="{'scale-100': registerForm.get('username')?.valid && registerForm.get('username')?.touched}">
+              <i class="fas fa-check-circle text-green-500"></i>
+            </div>
+          </div>
+          <div class="text-red-500 text-xs mt-1" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            <span *ngIf="registerForm.get('username')?.errors?.['required']">El usuario es obligatorio</span>
+            <span *ngIf="registerForm.get('username')?.errors?.['minlength']">El usuario debe tener al menos 3 caracteres</span>
+          </div>
+        </div>
+
+        <div class="mb-3 form-field">
+          <label for="email" class="block text-gray-700 text-sm font-medium mb-1">Correo electrónico:</label>
+          <div class="relative input-container">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-envelope text-gray-400"></i>
+            </div>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="nombre@ejemplo.com"
+              class="w-full pl-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm transition-all duration-200"
+              [ngClass]="{'border-red-500 bg-red-50': registerForm.get('email')?.invalid && registerForm.get('email')?.touched, 'border-green-500': registerForm.get('email')?.valid && registerForm.get('email')?.touched}"
+              (focus)="onInputFocus('email')"
+              (blur)="onInputBlur('email')"
+            >
+            <div class="transform scale-0 origin-left transition-transform duration-200 absolute right-3 top-1/2 -translate-y-1/2" [ngClass]="{'scale-100': registerForm.get('email')?.valid && registerForm.get('email')?.touched}">
+              <i class="fas fa-check-circle text-green-500"></i>
+            </div>
+          </div>
+          <div class="text-red-500 text-xs mt-1" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            <span *ngIf="registerForm.get('email')?.errors?.['required']">El correo es obligatorio</span>
+            <span *ngIf="registerForm.get('email')?.errors?.['email']">Formato de correo no válido</span>
+          </div>
+        </div>
+
+        <div class="mb-3 form-field">
+          <label for="password" class="block text-gray-700 text-sm font-medium mb-1">Contraseña:</label>
+          <div class="relative input-container">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              placeholder="********"
+              class="w-full pl-10 pr-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm transition-all duration-200"
+              [ngClass]="{'border-red-500 bg-red-50': registerForm.get('password')?.invalid && registerForm.get('password')?.touched, 'border-green-500': registerForm.get('password')?.valid && registerForm.get('password')?.touched}"
+              (focus)="onInputFocus('password')"
+              (blur)="onInputBlur('password')"
+            >
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none transition-colors duration-200 hover:text-gray-700"
+            >
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div class="text-red-500 text-xs mt-1" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            <span *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es obligatoria</span>
+            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
+          </div>
+        </div>
+
+        <div class="mb-4 form-field">
+          <label for="confirmPassword" class="block text-gray-700 text-sm font-medium mb-1">Confirmar contraseña:</label>
+          <div class="relative input-container">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              placeholder="********"
+              class="w-full pl-10 pr-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm transition-all duration-200"
+              [ngClass]="{'border-red-500 bg-red-50': (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) || registerForm.hasError('notSame'), 'border-green-500': registerForm.get('confirmPassword')?.valid && !registerForm.hasError('notSame') && registerForm.get('confirmPassword')?.touched}"
+              (focus)="onInputFocus('confirmPassword')"
+              (blur)="onInputBlur('confirmPassword')"
+            >
+            <button
+              type="button"
+              (click)="toggleConfirmPasswordVisibility()"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none transition-colors duration-200 hover:text-gray-700"
+            >
+              <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div class="text-red-500 text-xs mt-1" *ngIf="(registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) || registerForm.hasError('notSame')">
+            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">La confirmación de contraseña es obligatoria</span>
+            <span *ngIf="registerForm.hasError('notSame')">Las contraseñas no coinciden</span>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-red-600 text-white py-2 rounded-md font-medium transition duration-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-70 disabled:cursor-not-allowed text-sm"
+          [disabled]="registerForm.invalid || isLoading"
+        >
+          <span class="flex items-center justify-center">
+            <i class="fas fa-spinner fa-spin mr-2" *ngIf="isLoading"></i>
+            {{ isLoading ? 'Registrando...' : 'Registrarse' }}
+          </span>
+        </button>
+
+        <div class="relative flex py-3 items-center mt-3">
+          <div class="flex-grow border-t border-gray-300"></div>
+          <span class="flex-shrink mx-3 text-gray-500 text-xs">O</span>
+          <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <div class="text-center">
+          <span class="block text-gray-600 text-xs mb-2">¿Ya tienes una cuenta?</span>
+          <button
+            type="button"
+            class="w-full border border-red-600 text-red-600 bg-transparent py-2 rounded-md font-medium transition duration-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+            (click)="navigateToLogin()"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-4 text-center text-xs text-gray-500">
+        <p>© Universidad de los Llanos {{ currentYear }}</p>
+        <p>Sendero Ecológico - Todos los derechos reservados</p>
+      </div>
+    </div>
+  </div>
+</section>

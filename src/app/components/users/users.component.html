@@ -1,0 +1,149 @@
+<div class="rounded-lg shadow-lg overflow-hidden" [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-800': darkMode }">
+  <div class="px-4 py-3 border-b" [ngClass]="{'border-gray-200': !darkMode, 'border-gray-700': darkMode}">
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg font-semibold" [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }">
+        Gestión de Usuarios
+      </h3>
+      <button class="px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-700">
+        + Nuevo Usuario
+      </button>
+    </div>
+  </div>
+  <div class="p-4">
+    <!-- Buscador -->
+    <div class="mb-4">
+      <div class="relative">
+        <input type="text"
+              placeholder="Buscar usuario..."
+              class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+              [ngClass]="{'border-gray-300 focus:ring-green-500': !darkMode, 'border-gray-700 bg-gray-700 text-white focus:ring-green-400': darkMode}" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-3 top-2.5"
+            [ngClass]="{'text-gray-400': !darkMode, 'text-gray-300': darkMode}"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y" [ngClass]="{'divide-gray-200': !darkMode, 'divide-gray-700': darkMode}">
+        <thead [ngClass]="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+              Usuario
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+              Email
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+              Rol
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+              Estado
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y" [ngClass]="{'divide-gray-200 bg-white': !darkMode, 'divide-gray-700 bg-gray-800': darkMode}">
+          <tr *ngFor="let user of mockUsers">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10">
+                  <div class="h-10 w-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-600">
+                    {{ user.name.charAt(0) }}
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium" [ngClass]="{'text-gray-900': !darkMode, 'text-white': darkMode}">
+                    {{ user.name }}
+                  </div>
+                  <div class="text-sm" [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+                    Último acceso: {{ user.lastLogin }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm" [ngClass]="{'text-gray-900': !darkMode, 'text-white': darkMode}">{{ user.email }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': user.role === 'Admin' && !darkMode,
+                      'bg-green-900 text-green-200': user.role === 'Admin' && darkMode,
+                      'bg-blue-100 text-blue-800': user.role === 'Editor' && !darkMode,
+                      'bg-blue-900 text-blue-200': user.role === 'Editor' && darkMode,
+                      'bg-gray-100 text-gray-800': user.role === 'Usuario' && !darkMode,
+                      'bg-gray-700 text-gray-200': user.role === 'Usuario' && darkMode
+                    }">
+                {{ user.role }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': user.status === 'Activo' && !darkMode,
+                      'bg-green-900 text-green-200': user.status === 'Activo' && darkMode,
+                      'bg-yellow-100 text-yellow-800': user.status === 'Pendiente' && !darkMode,
+                      'bg-yellow-900 text-yellow-200': user.status === 'Pendiente' && darkMode,
+                      'bg-red-100 text-red-800': user.status === 'Inactivo' && !darkMode,
+                      'bg-red-900 text-red-200': user.status === 'Inactivo' && darkMode
+                    }">
+                {{ user.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <div class="flex space-x-2">
+                <button class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+                <button class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="flex justify-between items-center mt-4">
+      <div class="text-sm" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+        Mostrando <span class="font-medium">1</span> a <span class="font-medium">10</span> de <span class="font-medium">20</span> resultados
+      </div>
+      <div>
+        <nav class="flex items-center space-x-1">
+          <button class="px-3 py-1 rounded-md"
+                  [ngClass]="{'bg-gray-200 text-gray-700': !darkMode, 'bg-gray-700 text-gray-300': darkMode}">
+            Anterior
+          </button>
+          <button class="px-3 py-1 rounded-md"
+                  [ngClass]="{'bg-green-600 text-white': !darkMode, 'bg-green-600 text-white': darkMode}">
+            1
+          </button>
+          <button class="px-3 py-1 rounded-md"
+                  [ngClass]="{'bg-gray-200 text-gray-700': !darkMode, 'bg-gray-700 text-gray-300': darkMode}">
+            2
+          </button>
+          <button class="px-3 py-1 rounded-md"
+                  [ngClass]="{'bg-gray-200 text-gray-700': !darkMode, 'bg-gray-700 text-gray-300': darkMode}">
+            Siguiente
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

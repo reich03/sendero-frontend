@@ -1,0 +1,151 @@
+<div *ngIf="visible" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto transition-opacity bg-gray-900/75 backdrop-blur-sm modal-container">
+  <div class="w-full max-w-md mx-4 sm:mx-auto max-h-[90vh] flex flex-col rounded-xl shadow-xl modal-content transform transition-all" [ngClass]="{'bg-white': !darkMode, 'bg-gray-800': darkMode}">
+    <!-- Header -->
+    <div class="sticky top-0 z-10 flex items-center justify-between px-5 py-3 border-b" [ngClass]="{'border-gray-200 bg-white': !darkMode, 'border-gray-700 bg-gray-800': darkMode}">
+      <h3 class="text-lg font-semibold" [ngClass]="{'text-gray-800': !darkMode, 'text-white': darkMode}">
+        {{ data.id ? 'Editar Punto' : 'Nuevo Punto' }}
+      </h3>
+      <button (click)="onCancel()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-5 overflow-y-auto">
+      <div class="space-y-4">
+        <!-- Título -->
+        <div>
+          <label class="block mb-1.5 text-sm font-medium" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+            Nombre
+          </label>
+          <input type="text"
+                [(ngModel)]="data.title"
+                class="w-full px-3 py-2 transition-all border rounded-lg focus:outline-none focus:ring-2"
+                [ngClass]="{'border-gray-300 focus:ring-green-500': !darkMode, 'border-gray-600 bg-gray-700 text-white focus:ring-green-400': darkMode}"
+                placeholder="Nombre del punto" required>
+        </div>
+
+        <!-- Tipo -->
+        <div>
+          <label class="block mb-1.5 text-sm font-medium" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+            Tipo
+          </label>
+          <div class="relative">
+            <select [(ngModel)]="data.type"
+                  class="w-full px-3 py-2 transition-all border rounded-lg appearance-none focus:outline-none focus:ring-2"
+                  [ngClass]="{'border-gray-300 focus:ring-green-500': !darkMode, 'border-gray-600 bg-gray-700 text-white focus:ring-green-400': darkMode}">
+              <option value="fauna">Fauna</option>
+              <option value="flora">Flora</option>
+              <option value="ecosistema">Ecosistema</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+              <svg class="w-4 h-4" [ngClass]="{'text-gray-400': !darkMode, 'text-gray-500': darkMode}" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block mb-1.5 text-sm font-medium" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+            Descripción
+          </label>
+          <textarea [(ngModel)]="data.description"
+                  class="w-full px-3 py-2 transition-all border rounded-lg focus:outline-none focus:ring-2"
+                  [ngClass]="{'border-gray-300 focus:ring-green-500': !darkMode, 'border-gray-600 bg-gray-700 text-white focus:ring-green-400': darkMode}"
+                  rows="2" placeholder="Descripción"></textarea>
+        </div>
+
+        <!-- Coordenadas -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block mb-1.5 text-sm font-medium" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+              Latitud
+            </label>
+            <input type="number"
+                  [(ngModel)]="data.lat"
+                  class="w-full px-3 py-2 transition-all border rounded-lg focus:outline-none focus:ring-2"
+                  [ngClass]="{'border-gray-300 focus:ring-green-500': !darkMode, 'border-gray-600 bg-gray-700 text-white focus:ring-green-400': darkMode}"
+                  placeholder="Latitud" required>
+          </div>
+          <div>
+            <label class="block mb-1.5 text-sm font-medium" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+              Longitud
+            </label>
+            <input type="number"
+                  [(ngModel)]="data.lng"
+                  class="w-full px-3 py-2 transition-all border rounded-lg focus:outline-none focus:ring-2"
+                  [ngClass]="{'border-gray-300 focus:ring-green-500': !darkMode, 'border-gray-600 bg-gray-700 text-white focus:ring-green-400': darkMode}"
+                  placeholder="Longitud" required>
+          </div>
+        </div>
+
+        <!-- Campo de imagen -->
+        <div>
+          <label class="block mb-1.5 text-sm font-medium" [ngClass]="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+            Imagen
+          </label>
+          <div class="flex justify-center px-6 pt-5 pb-6 mt-1 transition-colors border-2 border-dashed rounded-lg cursor-pointer"
+               [ngClass]="{'border-gray-300 hover:border-gray-400': !darkMode, 'border-gray-600 hover:border-gray-500 bg-gray-700': darkMode}"
+               (click)="fileInput.click()">
+            <div class="space-y-1 text-center">
+              <svg class="w-8 h-8 mx-auto" [ngClass]="{'text-gray-400': !darkMode, 'text-gray-500': darkMode}" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="flex text-sm text-center" [ngClass]="{'text-gray-600': !darkMode, 'text-gray-400': darkMode}">
+                <span>Subir imagen</span>
+                <input id="file-upload" name="file-upload" type="file" #fileInput class="sr-only" (change)="onFileSelected($event)" accept="image/*">
+              </div>
+              <p class="text-xs" [ngClass]="{'text-gray-500': !darkMode, 'text-gray-400': darkMode}">
+                PNG, JPG, GIF hasta 10MB
+              </p>
+            </div>
+          </div>
+
+          <!-- Vista previa -->
+          <div *ngIf="data.imageUrl || imagePreview" class="grid grid-cols-2 gap-4 mt-4">
+            <!-- Imagen actual -->
+            <div *ngIf="data.imageUrl" class="overflow-hidden border rounded-lg" [ngClass]="{'border-gray-200': !darkMode, 'border-gray-700': darkMode}">
+              <div class="px-2 py-1 text-xs bg-opacity-75" [ngClass]="{'bg-gray-100 text-gray-600': !darkMode, 'bg-gray-700 text-gray-300': darkMode}">
+                Actual
+              </div>
+              <div class="p-2">
+                <img [src]="data.imageUrl" class="object-cover w-full h-24 rounded" alt="Imagen actual">
+              </div>
+            </div>
+
+            <!-- Nueva imagen -->
+            <div *ngIf="imagePreview" class="overflow-hidden border rounded-lg" [ngClass]="{'border-gray-200': !darkMode, 'border-gray-700': darkMode}">
+              <div class="px-2 py-1 text-xs bg-opacity-75" [ngClass]="{'bg-gray-100 text-gray-600': !darkMode, 'bg-gray-700 text-gray-300': darkMode}">
+                Nueva
+              </div>
+              <div class="p-2">
+                <img [src]="imagePreview" class="object-cover w-full h-24 rounded" alt="Nueva imagen">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sticky bottom-0 z-10 flex justify-end px-5 py-3 space-x-2 border-t" [ngClass]="{'border-gray-200 bg-white': !darkMode, 'border-gray-700 bg-gray-800': darkMode}">
+      <button type="button"
+              (click)="onCancel()"
+              class="px-4 py-2 text-sm font-medium transition-colors border rounded-lg focus:outline-none"
+              [ngClass]="{'border-gray-300 text-gray-700 hover:bg-gray-50': !darkMode,
+                          'border-gray-600 text-gray-300 hover:bg-gray-700': darkMode}">
+        Cancelar
+      </button>
+      <button type="button"
+              (click)="onSave()"
+              [disabled]="!isFormValid()"
+              class="px-4 py-2 text-sm font-medium text-white transition-colors bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>

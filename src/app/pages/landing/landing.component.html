@@ -1,0 +1,703 @@
+<!-- landing.component.html -->
+<div
+  class="min-h-screen transition-colors duration-300 bg-gradient-to-br from-green-50 to-green-100"
+>
+  <!-- Header/Navbar -->
+  <header class="bg-white shadow-lg">
+    <div class="container px-6 py-3 mx-auto max-w-7xl">
+      <div class="flex items-center justify-between">
+        <!-- Logo y Título -->
+        <div class="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-10 h-10 mr-3 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h1 class="text-3xl font-bold text-green-800">
+            Geovisor Biodiversidad
+          </h1>
+        </div>
+
+        <!-- Navegación -->
+        <nav class="items-center hidden space-x-6 md:flex">
+          <a
+            routerLink="/map"
+            class="text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+            >Mapa Interactivo</a
+          >
+          <a
+            href="#about"
+            class="text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+            >Acerca de</a
+          >
+          <a
+            href="#features"
+            class="text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+            >Características</a
+          >
+          <a
+            href="#ecosystem"
+            class="text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+            >Ecosistemas</a
+          >
+        </nav>
+
+        <!-- Menú móvil -->
+        <button class="text-gray-700 md:hidden" (click)="toggleMobileMenu()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Menú móvil desplegable -->
+      <div *ngIf="showMobileMenu" class="py-3 space-y-3 md:hidden">
+        <a
+          routerLink="/map"
+          class="block py-2 text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+          >Mapa Interactivo</a
+        >
+        <a
+          href="#about"
+          class="block py-2 text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+          >Acerca de</a
+        >
+        <a
+          href="#features"
+          class="block py-2 text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+          >Características</a
+        >
+        <a
+          href="#ecosystem"
+          class="block py-2 text-gray-700 transition-colors cursor-pointer hover:text-green-600"
+          >Ecosistemas</a
+        >
+        <a
+          routerLink="/login"
+          class="block w-full px-4 py-2 text-center text-white transition-colors bg-green-600 rounded-lg cursor-pointer hover:bg-green-700"
+          >Iniciar Sesión</a
+        >
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 md:py-24">
+    <div class="container px-6 mx-auto max-w-7xl">
+      <div class="flex flex-col items-center md:flex-row">
+        <div class="mb-10 md:w-1/2 md:mb-0 md:pr-8">
+          <h2 class="mb-6 text-4xl font-bold text-green-800 md:text-5xl">
+            Explora la Biodiversidad de los Llanos
+          </h2>
+          <p class="mb-8 text-lg text-gray-700">
+            Descubre y aprende sobre la fauna, flora y ecosistemas únicos de
+            nuestra región a través de un mapa interactivo diseñado para
+            fomentar la conservación y el conocimiento.
+          </p>
+          <div
+            class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
+          >
+            <a
+              routerLink="/map"
+              class="flex items-center justify-center px-8 py-3 text-lg font-semibold text-white transition-colors bg-green-600 rounded-lg cursor-pointer hover:bg-green-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                />
+              </svg>
+              Explorar Mapa
+            </a>
+            <a
+              routerLink="/register"
+              class="flex items-center justify-center px-8 py-3 text-lg font-semibold text-green-700 transition-colors border-2 border-green-600 rounded-lg cursor-pointer hover:bg-green-50"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                />
+              </svg>
+              Regístrate
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2">
+          <div class="relative px-4">
+            <div
+              class="absolute w-20 h-20 bg-green-400 rounded-full -top-4 -left-4 opacity-20"
+            ></div>
+            <div
+              class="absolute w-16 h-16 bg-yellow-400 rounded-full -bottom-4 -right-4 opacity-20"
+            ></div>
+            <img
+              src="../../../assets/imagen-animal2.jpg"
+              alt="Mapa de Biodiversidad"
+              class="relative z-10 w-full border-4 border-white rounded-lg shadow-2xl"
+              onerror="this.src='https://via.placeholder.com/600x400?text=Mapa+de+Biodiversidad'"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 bg-white">
+    <div class="container px-6 mx-auto max-w-7xl">
+      <div class="mb-12 text-center">
+        <h2 class="mb-4 text-3xl font-bold text-green-800">
+          Acerca del Proyecto
+        </h2>
+        <div class="w-24 h-1 mx-auto bg-green-500"></div>
+      </div>
+      <div class="flex flex-col items-center md:flex-row">
+        <div class="mb-8 md:w-1/2 md:mb-0 md:px-4">
+          <img
+            src="../../../assets/imagen-geovisor2.png"
+            alt="Universidad de los Llanos"
+            class="max-w-md mx-auto rounded-lg shadow-lg"
+            onerror="this.src='https://via.placeholder.com/400x300?text=Logo+Unillanos'"
+          />
+        </div>
+        <div class="md:w-1/2 md:pl-10">
+          <p class="mb-6 text-gray-700">
+            Este geovisor de biodiversidad es una iniciativa de la Universidad
+            de los Llanos para documentar, visualizar y preservar la riqueza
+            natural de nuestra región.
+          </p>
+          <p class="mb-6 text-gray-700">
+            A través de esta herramienta, estudiantes, investigadores y la
+            comunidad en general pueden explorar los diferentes puntos de
+            interés biológico, conocer las especies que habitan en ellos y
+            comprender la importancia de su conservación.
+          </p>
+          <div class="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-10 h-10 mr-3 text-green-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+              />
+            </svg>
+            <p class="font-semibold text-green-700">
+              Un proyecto dedicado a la investigación y conservación de los
+              ecosistemas de los Llanos Orientales de Colombia.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section
+    id="features"
+    class="py-16 bg-gradient-to-br from-green-50 to-green-100"
+  >
+    <div class="container px-6 mx-auto max-w-7xl">
+      <div class="mb-12 text-center">
+        <h2 class="mb-4 text-3xl font-bold text-green-800">
+          Características Principales
+        </h2>
+        <div class="w-24 h-1 mx-auto mb-4 bg-green-500"></div>
+        <p class="max-w-2xl mx-auto text-gray-700">
+          Nuestro geovisor ofrece herramientas avanzadas para explorar la
+          biodiversidad de la región de manera intuitiva.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <!-- Feature 1 -->
+        <div
+          class="p-6 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-xl"
+        >
+          <div
+            class="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-green-100 rounded-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-8 h-8 text-green-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              />
+            </svg>
+          </div>
+          <h3 class="mb-3 text-xl font-semibold text-center text-green-800">
+            Mapa Interactivo
+          </h3>
+          <p class="text-center text-gray-700">
+            Navega por un mapa detallado con marcadores de fauna, flora y
+            ecosistemas importantes de la región.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div
+          class="p-6 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-xl"
+        >
+          <div
+            class="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-yellow-100 rounded-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-8 h-8 text-yellow-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
+          </div>
+          <h3 class="mb-3 text-xl font-semibold text-center text-green-800">
+            Información Detallada
+          </h3>
+          <p class="text-center text-gray-700">
+            Accede a descripciones completas, imágenes y datos científicos sobre
+            cada punto de interés.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div
+          class="p-6 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-xl"
+        >
+          <div
+            class="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-blue-100 rounded-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-8 h-8 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+          </div>
+          <h3 class="mb-3 text-xl font-semibold text-center text-green-800">
+            Comunidad Colaborativa
+          </h3>
+          <p class="text-center text-gray-700">
+            Participa agregando comentarios, marcando favoritos y contribuyendo
+            con nuevos descubrimientos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ecosystem Showcase -->
+  <section id="ecosystem" class="py-16 bg-white">
+    <div class="container px-6 mx-auto max-w-7xl">
+      <div class="mb-12 text-center">
+        <h2 class="mb-4 text-3xl font-bold text-green-800">
+          Ecosistemas Destacados
+        </h2>
+        <div class="w-24 h-1 mx-auto mb-4 bg-green-500"></div>
+        <p class="max-w-2xl mx-auto text-gray-700">
+          Descubre la diversidad de ecosistemas presentes en la región de los
+          Llanos Orientales.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Ecosystem 1 -->
+        <div class="relative overflow-hidden rounded-lg shadow-lg group">
+          <img
+            src="../../../assets/imagen-unillanos.jpeg"
+            alt="Sabana Inundable"
+            class="object-cover w-full h-64 transition-transform duration-300 transform group-hover:scale-105"
+            onerror="this.src='https://via.placeholder.com/400x300?text=Sabana+Inundable'"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-70"
+          ></div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <h3 class="mb-1 text-xl font-semibold">Sabana Inundable</h3>
+            <p class="text-sm">
+              Extensas planicies que se inundan durante la temporada de lluvias.
+            </p>
+            <a
+              routerLink="/map"
+              class="inline-flex items-center mt-2 text-sm text-green-300 hover:text-green-200"
+            >
+              Explorar en el mapa
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 ml-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden rounded-lg shadow-lg group">
+          <img
+            src="../../../assets/imagen-unillanos2.jpg"
+            alt="Sabana Inundable"
+            class="object-cover w-full h-64 transition-transform duration-300 transform group-hover:scale-105"
+            onerror="this.src='https://via.placeholder.com/400x300?text=Sabana+Inundable'"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-70"
+          ></div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <h3 class="mb-1 text-xl font-semibold">Sabana Inundable</h3>
+            <p class="text-sm">
+              Extensas planicies que se inundan durante la temporada de lluvias.
+            </p>
+            <a
+              routerLink="/map"
+              class="inline-flex items-center mt-2 text-sm text-green-300 hover:text-green-200"
+            >
+              Explorar en el mapa
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 ml-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden rounded-lg shadow-lg group">
+          <img
+            src="../../../assets/imagen-animal2.jpg"
+            alt="Sabana Inundable"
+            class="object-cover w-full h-64 transition-transform duration-300 transform group-hover:scale-105"
+            onerror="this.src='https://via.placeholder.com/400x300?text=Sabana+Inundable'"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-70"
+          ></div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <h3 class="mb-1 text-xl font-semibold">Sabana Inundable</h3>
+            <p class="text-sm">
+              Extensas planicies que se inundan durante la temporada de lluvias.
+            </p>
+            <a
+              routerLink="/map"
+              class="inline-flex items-center mt-2 text-sm text-green-300 hover:text-green-200"
+            >
+              Explorar en el mapa
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 ml-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- Footer -->
+<footer class="py-12 text-white bg-gray-800">
+  <div class="container px-6 mx-auto max-w-7xl">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
+      <!-- Logo y descripción -->
+      <div class="px-2">
+        <div class="flex items-center mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-8 h-8 mr-2 text-green-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h3 class="text-xl font-bold text-green-400">
+            Geovisor Biodiversidad
+          </h3>
+        </div>
+        <p class="mb-4 text-gray-400">
+          Una iniciativa de la Universidad de los Llanos para la conservación
+          y divulgación de la biodiversidad regional.
+        </p>
+        <div class="flex space-x-4">
+          <a
+            href="#"
+            class="text-gray-400 transition-colors hover:text-green-400"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+          <a
+            href="#"
+            class="text-gray-400 transition-colors hover:text-green-400"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"
+              />
+            </svg>
+          </a>
+          <a
+            href="#"
+            class="text-gray-400 transition-colors hover:text-green-400"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Enlaces rápidos -->
+      <div class="px-2">
+        <h3 class="mb-4 text-lg font-semibold text-green-400">
+          Enlaces Rápidos
+        </h3>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href="#"
+              class="text-gray-400 transition-colors hover:text-green-400"
+              >Inicio</a
+            >
+          </li>
+          <li>
+            <a
+              routerLink="/map"
+              class="text-gray-400 transition-colors hover:text-green-400"
+              >Mapa Interactivo</a
+            >
+          </li>
+          <li>
+            <a
+              href="#about"
+              class="text-gray-400 transition-colors hover:text-green-400"
+              >Acerca de</a
+            >
+          </li>
+          <li>
+            <a
+              href="#features"
+              class="text-gray-400 transition-colors hover:text-green-400"
+              >Características</a
+            >
+          </li>
+          <li>
+            <a
+              href="#ecosystem"
+              class="text-gray-400 transition-colors hover:text-green-400"
+              >Ecosistemas</a
+            >
+          </li>
+          <li>
+            <a
+              routerLink="/login"
+              class="text-gray-400 transition-colors hover:text-green-400"
+              >Iniciar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contacto -->
+      <div class="px-2">
+        <h3 class="mb-4 text-lg font-semibold text-green-400">Contacto</h3>
+        <div class="space-y-3">
+          <p class="flex items-center text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 mr-2 text-green-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            Universidad de los Llanos, Villavicencio, Meta
+          </p>
+          <p class="flex items-center text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 mr-2 text-green-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            contacto&#64;unillanos.edu.co
+          </p>
+          <p class="flex items-center text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 mr-2 text-green-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
+            (+57) 123-456-7890
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-6 mt-10 border-t border-gray-700">
+      <div class="flex flex-col items-center justify-between md:flex-row">
+        <p class="mb-4 text-sm text-gray-400 md:mb-0">
+          © 2025 Geovisor de Biodiversidad - Universidad de los Llanos. Todos
+          los derechos reservados.
+        </p>
+        <div class="flex space-x-4">
+          <a
+            href="#"
+            class="text-sm text-gray-400 transition-colors hover:text-green-400"
+            >Términos y Condiciones</a
+          >
+          <a
+            href="#"
+            class="text-sm text-gray-400 transition-colors hover:text-green-400"
+            >Política de Privacidad</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

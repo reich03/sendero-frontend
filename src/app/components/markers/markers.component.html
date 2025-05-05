@@ -1,0 +1,359 @@
+<div
+  class="w-full overflow-hidden rounded-lg shadow-lg"
+  [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-800': darkMode }"
+>
+  <div
+    class="w-full px-4 py-3 border-b"
+    [ngClass]="{ 'border-gray-200': !darkMode, 'border-gray-700': darkMode }"
+  >
+    <div class="flex items-center justify-between">
+      <h3
+        class="text-lg font-semibold"
+        [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }"
+      >
+        Puntos del Mapa
+      </h3>
+      <button
+        class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700"
+        (click)="openModal()"
+      >
+        + Nuevo Punto
+      </button>
+    </div>
+  </div>
+  <div class="w-full p-4">
+    <!-- Filtros y Búsqueda -->
+    <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-3">
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Buscar punto..."
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+          [ngClass]="{
+            'border-gray-300 focus:ring-green-500': !darkMode,
+            'border-gray-700 bg-gray-700 text-white focus:ring-green-400':
+              darkMode
+          }"
+        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 absolute right-3 top-2.5"
+          [ngClass]="{ 'text-gray-400': !darkMode, 'text-gray-300': darkMode }"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+      <select
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+        [ngClass]="{
+          'border-gray-300 focus:ring-green-500': !darkMode,
+          'border-gray-700 bg-gray-700 text-white focus:ring-green-400':
+            darkMode
+        }"
+      >
+        <option value="">Todas las Categorías</option>
+        <option value="fauna">Fauna</option>
+        <option value="flora">Flora</option>
+        <option value="ecosistema">Ecosistema</option>
+      </select>
+    </div>
+
+    <!-- Tabla de Puntos -->
+    <div class="w-full overflow-x-auto">
+      <table
+        class="min-w-full divide-y table-fixed"
+        [ngClass]="{
+          'divide-gray-200': !darkMode,
+          'divide-gray-700': darkMode
+        }"
+      >
+        <thead [ngClass]="{ 'bg-gray-50': !darkMode, 'bg-gray-900': darkMode }">
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-400': darkMode
+              }"
+            >
+              Nombre
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-400': darkMode
+              }"
+            >
+              Categoría
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-400': darkMode
+              }"
+            >
+              Ubicación
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-400': darkMode
+              }"
+            >
+              Estado
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-400': darkMode
+              }"
+            >
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="w-full divide-y"
+          [ngClass]="{
+            'divide-gray-200 bg-white': !darkMode,
+            'divide-gray-700 bg-gray-800': darkMode
+          }"
+        >
+          <tr *ngFor="let marker of markers">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="ml-4">
+                  <div
+                    class="text-sm font-medium"
+                    [ngClass]="{
+                      'text-gray-900': !darkMode,
+                      'text-white': darkMode
+                    }"
+                  >
+                    {{ marker.title }}
+                  </div>
+                  <div
+                    class="text-sm"
+                    [ngClass]="{
+                      'text-gray-500': !darkMode,
+                      'text-gray-400': darkMode
+                    }"
+                  >
+                    ID: {{ marker.id }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800':
+                    marker.type === 'flora' && !darkMode,
+                  'bg-green-900 text-green-200':
+                    marker.type === 'flora' && darkMode,
+                  'bg-blue-100 text-blue-800':
+                    marker.type === 'fauna' && !darkMode,
+                  'bg-blue-900 text-blue-200':
+                    marker.type === 'fauna' && darkMode,
+                  'bg-yellow-100 text-yellow-800':
+                    marker.type === 'ecosistema' && !darkMode,
+                  'bg-yellow-900 text-yellow-200':
+                    marker.type === 'ecosistema' && darkMode
+                }"
+              >
+                {{ marker.type }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div
+                class="text-sm"
+                [ngClass]="{
+                  'text-gray-900': !darkMode,
+                  'text-white': darkMode
+                }"
+              >
+                {{ marker.lat }}
+              </div>
+              <div
+                class="text-sm"
+                [ngClass]="{
+                  'text-gray-500': !darkMode,
+                  'text-gray-400': darkMode
+                }"
+              >
+                {{ marker.lng }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': !darkMode,
+                  'bg-green-900 text-green-200': darkMode
+                }"
+              >
+                Activo
+              </span>
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap">
+              <div class="flex space-x-2">
+                <button
+                  class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                  (click)="openModal(marker)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                  (click)="openModal(marker)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                  (click)="deleteMarker(marker.id)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="showModal">
+        <app-marker-dialog
+          *ngIf="showModal"
+          [visible]="true"
+          [data]="currentMarker"
+          (close)="closeModal()"
+          (save)="saveMarker($event)"
+        >
+        </app-marker-dialog>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="flex items-center justify-between w-full mt-4">
+      <div
+        class="text-sm"
+        [ngClass]="{ 'text-gray-700': !darkMode, 'text-gray-300': darkMode }"
+      >
+        Mostrando <span class="font-medium">1</span> a
+        <span class="font-medium">10</span> de
+        <span class="font-medium">{{ markers.length }}</span> resultados
+      </div>
+      <div>
+        <nav class="flex items-center space-x-1">
+          <button
+            class="px-3 py-1 rounded-md"
+            [ngClass]="{
+              'bg-gray-200 text-gray-700': !darkMode,
+              'bg-gray-700 text-gray-300': darkMode
+            }"
+          >
+            Anterior
+          </button>
+          <button
+            class="px-3 py-1 rounded-md"
+            [ngClass]="{
+              'bg-green-600 text-white': !darkMode,
+              'bg-green-600 text-white': darkMode
+            }"
+          >
+            1
+          </button>
+          <button
+            class="px-3 py-1 rounded-md"
+            [ngClass]="{
+              'bg-gray-200 text-gray-700': !darkMode,
+              'bg-gray-700 text-gray-300': darkMode
+            }"
+          >
+            2
+          </button>
+          <button
+            class="px-3 py-1 rounded-md"
+            [ngClass]="{
+              'bg-gray-200 text-gray-700': !darkMode,
+              'bg-gray-700 text-gray-300': darkMode
+            }"
+          >
+            3
+          </button>
+          <button
+            class="px-3 py-1 rounded-md"
+            [ngClass]="{
+              'bg-gray-200 text-gray-700': !darkMode,
+              'bg-gray-700 text-gray-300': darkMode
+            }"
+          >
+            Siguiente
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
