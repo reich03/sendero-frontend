@@ -6,11 +6,13 @@ import { UsersComponent } from '../../components/users/users.component';
 import { AuditComponent } from "../../components/audit/audit.component";
 import { UserViewComponent } from "../../components/user-view/user-view.component";
 import { ReportComponent } from "../../components/report/report.component";
+import { EstacionesComponent } from "../../components/estaciones/estaciones.component";
+import { EventosComponent } from "../../components/eventos/eventos.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MarkersComponent, UsersComponent, AuditComponent, UserViewComponent, ReportComponent],
+  imports: [CommonModule, RouterModule, MarkersComponent, UsersComponent, AuditComponent, UserViewComponent, ReportComponent, EstacionesComponent, EventosComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

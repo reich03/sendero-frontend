@@ -1,24 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { EstacionService } from '../../services/estacion.service';
+import { Estacion } from '../../models/estacion.model';
 
 @Component({
   selector: 'app-landing',
+  templateUrl: './landing.component.html',
+  styleUrls: ['./landing.component.css'],
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './landing.component.html',
-  styleUrl: './landing.component.css'
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
   showMobileMenu = false;
-  darkMode = false;
+  estacionesDestacadas: Estacion[] = [];
+  loading = true;
 
-  toggleMobileMenu() {
+  constructor(private estacionService: EstacionService) {}
+
+  ngOnInit(): void {
+    this.loadEstacionesDestacadas();
+  }
+
+  toggleMobileMenu(): void {
     this.showMobileMenu = !this.showMobileMenu;
   }
 
-  toggleDarkMode() {
-    this.darkMode = !this.darkMode;
-    document.documentElement.classList.toggle('dark');
+  loadEstacionesDestacadas(): void {
+    this.loading = true;
+    this.estacionService.listarEstaciones().subscribe({
+      next: (estaciones) => {
+        this.estacionesDestacadas = estaciones.slice(0, 3);
+        this.loading = false;
+        console.log('Estaciones destacadas:', this.estacionesDestacadas);
+      },
+      error: (error) => {
+        console.error('Error cargando estaciones destacadas:', error);
+        this.loading = false;
+      },
+    });
+  }
+
+  getDescriptionPreview(description: string, maxLength: number = 100): string {
+    if (!description)
+      return 'Descubre los puntos de interés y eventos de esta estación';
+    return description.length > maxLength
+      ? description.substring(0, maxLength) + '...'
+      : description;
   }
 }

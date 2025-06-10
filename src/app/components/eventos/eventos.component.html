@@ -1,0 +1,281 @@
+<div class="eventos-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1>Gestión de Eventos</h1>
+      <div class="header-stats">
+        <div class="stat-card">
+          <span class="stat-number">{{ totalEventos }}</span>
+          <span class="stat-label">Total Eventos</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">{{ vistaActual }}</span>
+          <span class="stat-label">Vista Actual</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="view-toggle">
+        <button
+          [class.active]="viewMode === 'cards'"
+          (click)="setViewMode('cards')"
+          class="toggle-btn"
+        >
+          📱 Cards
+        </button>
+        <button
+          [class.active]="viewMode === 'table'"
+          (click)="setViewMode('table')"
+          class="toggle-btn"
+        >
+          📊 Tabla
+        </button>
+      </div>
+      <button (click)="showForm()" class="btn-primary">➕ Nuevo Evento</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading && !isFormVisible" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando eventos...</p>
+  </div>
+
+  <!-- Formulario CORREGIDO -->
+  <div *ngIf="isFormVisible" class="form-overlay">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>{{ isEditing ? "Editar Evento" : "Nuevo Evento" }}</h2>
+        <button (click)="hideForm()" class="btn-close">✖</button>
+      </div>
+
+      <form class="evento-form">
+        <!-- Nombre -->
+        <div class="form-group">
+          <label for="nombre">Nombre del Evento *</label>
+          <input
+            id="nombre"
+            name="nombre"
+            type="text"
+            [(ngModel)]="newEvento.nombre"
+            placeholder="Ej: Caminata Ecológica Nocturna"
+            class="form-input"
+            required
+          />
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            name="descripcion"
+            [(ngModel)]="newEvento.descripcion"
+            placeholder="Describe el evento, actividades, duración, etc."
+            class="form-textarea"
+            rows="4"
+          >
+          </textarea>
+        </div>
+
+        <!-- Fecha del Evento -->
+        <div class="form-group">
+          <label for="fechaEvento">Fecha y Hora del Evento *</label>
+          <input
+            id="fechaEvento"
+            name="fechaEvento"
+            type="datetime-local"
+            [(ngModel)]="newEvento.fechaEvento"
+            class="form-input"
+            required
+          />
+        </div>
+
+        <!-- Estación -->
+        <div class="form-group">
+          <label for="estacion">Estación *</label>
+          <select
+            id="estacion"
+            name="estacionId"
+            [(ngModel)]="newEvento.estacionId"
+            class="form-select"
+            required
+          >
+            <option value="0">Selecciona una estación</option>
+            <option
+              *ngFor="let estacion of estacionesDisponibles"
+              [value]="estacion.id"
+            >
+              {{ estacion.nombre }}
+            </option>
+          </select>
+          <small class="form-help">
+            Selecciona la estación donde se realizará el evento
+          </small>
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+          <button type="button" (click)="hideForm()" class="btn-secondary">
+            Cancelar
+          </button>
+          <!-- Botón de debug temporal -->
+          <button type="button" (click)="debugForm()" class="btn-secondary">
+            🐛 Debug
+          </button>
+          <button
+            type="button"
+            (click)="isEditing ? updateEvento() : createEvento()"
+            [disabled]="isFormDisabled"
+            class="btn-primary"
+          >
+            {{ loadingText }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Vista Cards -->
+  <div *ngIf="viewMode === 'cards' && !loading" class="cards-container">
+    <div *ngIf="eventos.length === 0" class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No hay eventos</h3>
+      <p>Crea tu primer evento para comenzar</p>
+      <button (click)="showForm()" class="btn-primary">Crear Evento</button>
+    </div>
+
+    <div class="cards-grid">
+      <div
+        *ngFor="let evento of eventos; trackBy: trackByEventoId"
+        class="evento-card"
+      >
+        <!-- Header de la card -->
+        <div class="card-header">
+          <div class="card-title">
+            <h3>{{ evento.nombre }}</h3>
+            <span class="evento-id">#{{ evento.id }}</span>
+          </div>
+          <div class="card-actions">
+            <button
+              (click)="editEvento(evento)"
+              class="btn-icon edit"
+              title="Editar evento"
+            >
+              ✏️
+            </button>
+            <button
+              (click)="deleteEvento(evento.id, evento.nombre)"
+              class="btn-icon delete"
+              title="Eliminar evento"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        <!-- Contenido de la card -->
+        <div class="card-content">
+          <div class="card-info">
+            <div class="info-item">
+              <span class="info-label">📍 Estación:</span>
+              <span class="info-value">{{ evento.estacion.nombre }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">📅 Fecha:</span>
+              <span class="info-value">{{
+                formatDate(evento.fechaEvento)
+              }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">👤 Creado por:</span>
+              <span class="info-value">{{
+                evento.usuarioCreador.username
+              }}</span>
+            </div>
+          </div>
+
+          <div class="card-description">
+            <p>{{ getDescriptionPreview(evento.descripcion, 120) }}</p>
+          </div>
+        </div>
+
+        <!-- Footer de la card -->
+        <div class="card-footer">
+          <div class="estacion-info">
+            <span class="estacion-badge"
+              >{{ evento.estacion.zonas.length }} zonas</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista Tabla -->
+  <div *ngIf="viewMode === 'table' && !loading" class="table-container">
+    <div *ngIf="eventos.length === 0" class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No hay eventos</h3>
+      <p>Crea tu primer evento para comenzar</p>
+      <button (click)="showForm()" class="btn-primary">Crear Evento</button>
+    </div>
+
+    <table *ngIf="eventos.length > 0" class="eventos-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Estación</th>
+          <th>Fecha del Evento</th>
+          <th>Creado por</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let evento of eventos; trackBy: trackByEventoId">
+          <td>{{ evento.id }}</td>
+          <td class="nombre-cell">
+            <strong>{{ evento.nombre }}</strong>
+          </td>
+          <td class="estacion-cell">
+            <span class="estacion-name">{{ evento.estacion.nombre }}</span>
+            <small class="zona-count"
+              >{{ evento.estacion.zonas.length }} zonas</small
+            >
+          </td>
+          <td class="fecha-cell">
+            {{ formatDate(evento.fechaEvento) }}
+          </td>
+          <td class="user-cell">
+            <span class="username">{{ evento.usuarioCreador.username }}</span>
+            <small class="user-role">{{ evento.usuarioCreador.role }}</small>
+          </td>
+          <td class="descripcion-cell">
+            {{ getDescriptionPreview(evento.descripcion, 80) }}
+          </td>
+          <td class="acciones-cell">
+            <button
+              (click)="editEvento(evento)"
+              class="btn-table edit"
+              title="Editar"
+            >
+              ✏️
+            </button>
+            <button
+              (click)="deleteEvento(evento.id, evento.nombre)"
+              class="btn-table delete"
+              title="Eliminar"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
