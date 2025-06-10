@@ -43,15 +43,28 @@
         <nav>
           <ul class="flex space-x-1 md:space-x-6">
             <li>
-              <a routerLink="/inicio" routerLinkActive="bg-green-100 "
-                class="flex items-center px-3 py-2 transition-colors duration-200 rounded-lg" [ngClass]="{
+              <a
+                routerLink="/inicio"
+                routerLinkActive="bg-green-100 "
+                class="flex items-center px-3 py-2 transition-colors duration-200 rounded-lg"
+                [ngClass]="{
                   'text-gray-700 hover:bg-green-100': !darkMode,
                   'text-gray-200 dark:bg-gray-700 hover:bg-gray-800': darkMode
-                }">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                }"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
                 </svg>
                 Inicio
               </a>
@@ -176,11 +189,11 @@
       <!-- Sidebar de navegación con ancho reducido -->
       <div class="mb-6 md:w-64 md:mb-0 md:min-w-64 md:flex-shrink-0">
         <div
-          class="sticky p-4 rounded-lg shadow-lg top-20"
+          class="sticky top-0 h-[calc(100vh-8rem)] p-4 rounded-lg shadow-lg overflow-y-auto flex flex-col"
           [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-800': darkMode }"
         >
           <h3
-            class="pb-2 mb-4 text-lg font-semibold border-b"
+            class="pb-2 mb-2 text-lg font-semibold border-b"
             [ngClass]="{
               'text-green-800 border-gray-200': !darkMode,
               'text-green-400 border-gray-700': darkMode
@@ -326,6 +339,39 @@
             </li>
             <li>
               <a
+                (click)="setActiveView('reports')"
+                class="flex items-center px-3 py-2 transition-colors duration-200 rounded-lg cursor-pointer"
+                [ngClass]="{
+                  'bg-green-100 text-green-800':
+                    activeView === 'audit' && !darkMode,
+                  'bg-gray-700 text-green-400':
+                    activeView === 'audit' && darkMode,
+                  'text-gray-700 hover:bg-green-50':
+                    activeView !== 'audit' && !darkMode,
+                  'text-gray-300 hover:bg-gray-700':
+                    activeView !== 'audit' && darkMode
+                }"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 3v18h14V3H5zm9 6H9v2h5V9zm0 4H9v2h5v-2z"
+                  />
+                </svg>
+
+                Reportes
+              </a>
+            </li>
+            <li>
+              <a
                 (click)="setActiveView('settings')"
                 class="flex items-center px-3 py-2 transition-colors duration-200 rounded-lg cursor-pointer"
                 [ngClass]="{
@@ -363,10 +409,51 @@
               </a>
             </li>
           </ul>
+          <hr
+            class="my-4 border-t"
+            [ngClass]="{
+              'border-gray-200': !darkMode,
+              'border-gray-700': darkMode
+            }"
+          />
+
+          <div
+            (click)="setActiveView('user-profile')"
+            class="p-3 pb-0.5 transition-all duration-200 cursor-pointer rounded-xl hover:shadow-md"
+            [ngClass]="{
+              'bg-gray-100/40 hover:bg-gray-200/60': !darkMode,
+              'bg-gray-900 text-gray-200 hover:bg-gray-800': darkMode
+            }"
+          >
+            <div class="flex items-center space-x-3">
+              <div
+                class="flex items-center justify-center w-10 h-10 font-bold text-white uppercase bg-green-700 rounded-full"
+              >
+                {{ currentUser?.username?.[0] || '?' }}
+              </div>
+              <div>
+                <p
+                  class="text-sm font-semibold"
+                  [ngClass]="{
+                    'text-gray-800': !darkMode,
+                    'text-green-400': darkMode
+                  }"
+                >
+                  {{ currentUser?.username || "Invitado" }}
+                </p>
+                <p class="text-xs text-gray-500" *ngIf="currentUser?.email">
+                  {{ currentUser.email }}
+                </p>
+                <p class="text-xs text-gray-500" *ngIf="currentUser?.role">
+                  Rol: {{ currentUser.role }}
+                </p>
+              </div>
+            </div>
+                      
+          </div>
         </div>
       </div>
 
-      <!-- Contenido principal con máximo ancho disponible -->
       <div class="flex-grow w-full">
         <!-- Vista del Dashboard -->
         <div
@@ -635,20 +722,30 @@
           >
             <h3
               class="text-lg font-semibold"
-              [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }"
+              [ngClass]="{
+                'text-gray-800': !darkMode,
+                'text-white': darkMode
+              }"
             >
               Actividad Reciente
             </h3>
           </div>
         </div>
 
-        <!-- Componente de Marcadores (ancho completo) -->
         <div *ngIf="activeView === 'markers'" class="w-full">
           <app-markers></app-markers>
         </div>
-
+        <div *ngIf="activeView === 'user-profile'" class="w-full">
+          <app-user-view></app-user-view>
+        </div>
+        <div *ngIf="activeView === 'audit'" class="w-full">
+          <app-audit></app-audit>
+        </div>
         <div *ngIf="activeView === 'users'" class="w-full">
           <app-users></app-users>
+        </div>
+        <div *ngIf="activeView === 'reports'" class="w-full">
+          <app-report></app-report>
         </div>
       </div>
     </div>

@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Verificar si el usuario está autenticado
     this.authService.isAuthenticated.subscribe(isAuth => {
       if (isAuth) {
         this.router.navigate(['/map']);
@@ -47,7 +46,6 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      // Marcar todos los campos como touched para mostrar errores
       Object.keys(this.loginForm.controls).forEach(key => {
         const control = this.loginForm.get(key);
         control?.markAsTouched();
@@ -61,7 +59,6 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(username, password).subscribe({
       next: () => {
-        // Mostrar SweetAlert de éxito
         Swal.fire({
           title: '¡Inicio de sesión exitoso!',
           text: 'Redirigiendo al mapa...',
@@ -70,7 +67,6 @@ export class LoginComponent implements OnInit {
           showConfirmButton: false
         });
 
-        // Redireccionar al mapa
         setTimeout(() => {
           this.router.navigate(['/map']);
         }, 1500);

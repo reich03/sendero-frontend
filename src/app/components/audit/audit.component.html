@@ -1,0 +1,173 @@
+<div class="w-full overflow-scroll rounded-lg shadow-xl h-[calc(100vh-8rem)]" [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-900': darkMode }">
+  <!-- Header con título y botón de modo oscuro -->
+  <div class="px-6 py-4 border-b" [ngClass]="{'border-gray-200': !darkMode, 'border-gray-700': darkMode}">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" [ngClass]="{ 'text-blue-600': !darkMode, 'text-blue-400': darkMode }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-lg font-bold" [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }">
+          Auditoría del Sistema
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="p-6 space-y-6">
+    <!-- Filtros -->
+    <div class="p-4 rounded-lg" [ngClass]="{ 'bg-gray-50': !darkMode, 'bg-gray-800': darkMode }">
+      <h4 class="mb-3 font-medium" [ngClass]="{ 'text-gray-700': !darkMode, 'text-gray-300': darkMode }">Filtrar registros</h4>
+      <div class="flex flex-wrap items-end gap-4">
+        <div>
+          <label class="block mb-2 text-sm font-medium" [ngClass]="{ 'text-gray-600': !darkMode, 'text-gray-400': darkMode }">Desde</label>
+          <input type="date" [(ngModel)]="fechaDesde"
+            class="px-3 py-2 transition-colors border rounded-md focus:ring-2 focus:outline-none"
+            [ngClass]="{
+              'border-gray-300 focus:border-blue-500 focus:ring-blue-200': !darkMode,
+              'border-gray-600 bg-gray-700 text-white focus:border-blue-400 focus:ring-blue-800': darkMode
+            }" />
+        </div>
+        <div>
+          <label class="block mb-2 text-sm font-medium" [ngClass]="{ 'text-gray-600': !darkMode, 'text-gray-400': darkMode }">Hasta</label>
+          <input type="date" [(ngModel)]="fechaHasta"
+            class="px-3 py-2 transition-colors border rounded-md focus:ring-2 focus:outline-none"
+            [ngClass]="{
+              'border-gray-300 focus:border-blue-500 focus:ring-blue-200': !darkMode,
+              'border-gray-600 bg-gray-700 text-white focus:border-blue-400 focus:ring-blue-800': darkMode
+            }" />
+        </div>
+        <button (click)="filtrarPorFecha()"
+          class="px-4 py-2 font-medium text-white transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+          [ngClass]="{
+            'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500': !darkMode,
+            'bg-blue-700 hover:bg-blue-800 focus:ring-blue-600': darkMode
+          }">
+          <div class="flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            <span>Filtrar</span>
+          </div>
+        </button>
+        <button (click)="limpiarFiltros()"
+          class="px-4 py-2 font-medium transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+          [ngClass]="{
+            'bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500': !darkMode,
+            'bg-gray-700 text-gray-200 hover:bg-gray-600 focus:ring-gray-600': darkMode
+          }">
+          <div class="flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>Limpiar</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div class="p-4 transition-shadow rounded-lg shadow hover:shadow-md" [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-800': darkMode }">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-400': darkMode }">Total de registros</p>
+            <p class="text-2xl font-bold" [ngClass]="{ 'text-gray-900': !darkMode, 'text-white': darkMode }">{{ filteredLogs.length }}</p>
+          </div>
+          <div class="p-3 rounded-full" [ngClass]="{ 'bg-blue-100': !darkMode, 'bg-blue-900': darkMode }">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" [ngClass]="{ 'text-blue-600': !darkMode, 'text-blue-300': darkMode }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="p-4 transition-shadow rounded-lg shadow hover:shadow-md" [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-800': darkMode }">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-400': darkMode }">Período</p>
+            <p class="text-lg font-bold" [ngClass]="{ 'text-gray-900': !darkMode, 'text-white': darkMode }">
+              {{ (fechaDesde && fechaHasta) ? formatShortDate(fechaDesde) + ' - ' + formatShortDate(fechaHasta) : 'Todos los registros' }}
+            </p>
+          </div>
+          <div class="p-3 rounded-full" [ngClass]="{ 'bg-purple-100': !darkMode, 'bg-purple-900': darkMode }">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" [ngClass]="{ 'text-purple-600': !darkMode, 'text-purple-300': darkMode }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de registros -->
+    <div class="overflow-x-auto rounded-lg shadow" [ngClass]="{ 'bg-white': !darkMode, 'bg-gray-800': darkMode }">
+      <table class="min-w-full divide-y" [ngClass]="{ 'divide-gray-200': !darkMode, 'divide-gray-700': darkMode }">
+        <thead [ngClass]="{ 'bg-gray-50': !darkMode, 'bg-gray-700': darkMode }">
+          <tr>
+            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-300': darkMode }">Usuario</th>
+            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-300': darkMode }">Acción</th>
+            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-300': darkMode }">Entidad</th>
+            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-300': darkMode }">ID</th>
+            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-300': darkMode }">Detalles</th>
+            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-300': darkMode }">Fecha</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y" [ngClass]="{ 'divide-gray-200': !darkMode, 'divide-gray-700': darkMode }">
+          <tr *ngFor="let log of filteredLogs" class="transition-colors hover:bg-opacity-10" [ngClass]="{ 'hover:bg-gray-100': !darkMode, 'hover:bg-gray-700': darkMode }">
+            <td class="px-6 py-4 text-sm whitespace-nowrap" [ngClass]="{ 'text-gray-900': !darkMode, 'text-gray-200': darkMode }">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-8 h-8 mr-3 rounded-full" [ngClass]="{ 'bg-blue-100 text-blue-600': !darkMode, 'bg-blue-900 text-blue-300': darkMode }">
+                  {{ getInitials(log.username) }}
+                </div>
+                {{ log.username }}
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap" [ngClass]="{ 'text-gray-900': !darkMode, 'text-gray-200': darkMode }">
+              <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': log.action === 'CREATE',
+                  'bg-blue-100 text-blue-800': log.action === 'UPDATE',
+                  'bg-red-100 text-red-800': log.action === 'DELETE',
+                  'bg-yellow-100 text-yellow-800': log.action === 'LOGIN',
+                  'bg-purple-100 text-purple-800': log.action === 'EXPORT',
+                  'bg-gray-100 text-gray-800': !['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'EXPORT'].includes(log.action),
+                  'dark:bg-green-900 dark:text-green-300': darkMode && log.action === 'CREATE',
+                  'dark:bg-blue-900 dark:text-blue-300': darkMode && log.action === 'UPDATE',
+                  'dark:bg-red-900 dark:text-red-300': darkMode && log.action === 'DELETE',
+                  'dark:bg-yellow-900 dark:text-yellow-300': darkMode && log.action === 'LOGIN',
+                  'dark:bg-purple-900 dark:text-purple-300': darkMode && log.action === 'EXPORT',
+                  'dark:bg-gray-700 dark:text-gray-300': darkMode && !['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'EXPORT'].includes(log.action)
+                }">
+                {{ log.action }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap" [ngClass]="{ 'text-gray-900': !darkMode, 'text-gray-200': darkMode }">{{ log.entity }}</td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap" [ngClass]="{ 'text-gray-900': !darkMode, 'text-gray-200': darkMode }">
+              <span class="font-mono text-xs" [ngClass]="{ 'text-gray-600': !darkMode, 'text-gray-400': darkMode }">{{ log.entityId }}</span>
+            </td>
+            <td class="px-6 py-4 text-sm" [ngClass]="{ 'text-gray-900': !darkMode, 'text-gray-200': darkMode }">
+              <div class="max-w-xs truncate">{{ log.details }}</div>
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap" [ngClass]="{ 'text-gray-900': !darkMode, 'text-gray-200': darkMode }">
+              {{ formatDate(log.timestamp) }}
+            </td>
+          </tr>
+          <tr *ngIf="filteredLogs.length === 0">
+            <td colspan="6" class="px-6 py-10 text-sm text-center" [ngClass]="{ 'text-gray-500': !darkMode, 'text-gray-400': darkMode }">
+              <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-3" [ngClass]="{ 'text-gray-400': !darkMode, 'text-gray-600': darkMode }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p>No se encontraron registros para el período seleccionado</p>
+                <button (click)="limpiarFiltros()" class="mt-3 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                  Mostrar todos los registros
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -25,6 +25,8 @@
     "@types/leaflet": "^1.9.17",
     "@types/leaflet-routing-machine": "^3.2.8",
     "bootstrap": "^5.3.5",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "ngx-cookie-service": "^19.1.2",

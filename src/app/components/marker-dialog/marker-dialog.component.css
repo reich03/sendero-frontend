@@ -1,3 +1,69 @@
 .modal-container {
   z-index: 9999 !important;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+#mini-map {
+  min-height: 350px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+#mini-map:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Estilo para el marcador cuando se arrastra */
+.leaflet-marker-draggable {
+  cursor: move !important;
+  filter: drop-shadow(0 0 4px rgba(0, 128, 0, 0.6));
+}
+
+/* Eliminar el contorno azul en los campos de formulario en Chrome */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+/* Animación para los botones */
+button {
+  transition: all 0.2s ease;
+}
+
+button:active:not([disabled]) {
+  transform: scale(0.98);
+}
+
+/* Animación para el hover de la zona de carga de imágenes */
+div[class*="border-dashed"] {
+  transition: all 0.3s ease;
+}
+
+div[class*="border-dashed"]:hover {
+  border-color: #22c55e !important; /* Verde */
+}
+
+/* Estilos específicos para tema oscuro */
+:host-context(.dark-mode) #mini-map {
+  filter: brightness(0.9);
+}
+
+/* Transiciones suaves para cambios de tema */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }

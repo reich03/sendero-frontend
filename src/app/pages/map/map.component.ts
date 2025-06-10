@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  Renderer2,
+} from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { MapService, Point, PointType } from '../../services/map.service';
@@ -7,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { AuditService } from '../../services/audit.service';
 
 @Component({
   selector: 'app-map',
@@ -36,12 +44,13 @@ export class MapComponent implements OnInit, AfterViewInit {
     ecosistema: boolean;
     destacados: boolean;
   } = {
-      fauna: true,
-      flora: true,
-      ecosistema: true,
-      destacados: false,
-    };
+    fauna: true,
+    flora: true,
+    ecosistema: true,
+    destacados: false,
+  };
   searchTerm = '';
+  isRouteActive = false;
 
   @ViewChild('infoPanel') infoPanel!: ElementRef;
   routeControl: L.Routing.Control | null = null;
@@ -51,9 +60,8 @@ export class MapComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private router: Router,
     private cookieService: CookieService,
-
-
-  ) { }
+    private auditService: AuditService
+  ) {}
 
   ngOnInit(): void {
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -63,10 +71,9 @@ export class MapComponent implements OnInit, AfterViewInit {
       document.documentElement.classList.add('dark');
     }
 
-
-    const userData =this.cookieService.get(this.TOKEN_KEY);
+    const userData = this.cookieService.get(this.TOKEN_KEY);
     this.isGuest = !userData;
-    console.log(userData)
+    console.log(userData);
     this.initMap();
   }
 
@@ -83,24 +90,26 @@ export class MapComponent implements OnInit, AfterViewInit {
 
     this.updateMapStyle();
 
-    L.control.scale({
-      imperial: false,
-      metric: true,
-      position: 'bottomleft'
-    }).addTo(this.map);
+    L.control
+      .scale({
+        imperial: false,
+        metric: true,
+        position: 'bottomleft',
+      })
+      .addTo(this.map);
 
-    // Cargar puntos del backend
     this.fetchPoints();
 
     const logoControl = L.Control.extend({
       options: {
-        position: 'bottomright'
+        position: 'bottomright',
       },
       onAdd: function () {
         const container = L.DomUtil.create('div', 'map-logo');
-        container.innerHTML = '<img src="../../../assets/Logo Unillanos-Horizontal.png" alt="Logo Unillanos" style="width: 120px; background-color: white; padding: 5px; border-radius: 5px;">';
+        container.innerHTML =
+          '<img src="../../../assets/Logo Unillanos-Horizontal.png" alt="Logo Unillanos" style="width: 120px; background-color: white; padding: 5px; border-radius: 5px;">';
         return container;
-      }
+      },
     });
 
     this.map.addControl(new logoControl());
@@ -111,49 +120,185 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.loadingError = false;
 
     this.mapService.getZonas().subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.points = data;
         this.isLoading = false;
         this.loadPoints();
       },
-      error: (error:any) => {
+      error: (error: any) => {
         console.error('Error obteniendo zonas:', error);
         this.isLoading = false;
         this.loadingError = true;
-      }
+      },
     });
   }
 
+  // loadPoints() {
+  //   this.clearMarkers();
+
+  //   this.points.forEach((point) => {
+  //     if (!this.shouldDisplayPoint(point)) {
+  //       return;
+  //     }
+
+  //     let marker;
+
+  //     if (
+  //       point.type === 'fauna' ||
+  //       point.type === 'flora' ||
+  //       point.type === 'ecosistema'
+  //     ) {
+  //       const icon = this.getMarkerIcon(point.type);
+  //       marker = L.marker([point.lat, point.lng], { icon });
+  //     } else {
+  //       marker = L.marker([point.lat, point.lng]);
+  //     }
+
+  //     marker.addTo(this.map!).on('click', () => {
+  //       // Show point info in the side panel
+  //       this.showPointDetails(point);
+  //     });
+
+  //     this.markers.push(marker);
+  //   });
+  // }
+
+  // Modifica la función loadPoints en el archivo map.component.ts
+  // Busca esta función y reemplaza el código donde creas los marcadores
+
   loadPoints() {
     this.clearMarkers();
-
-    this.points.forEach(point => {
+    this.points.forEach((point) => {
       if (!this.shouldDisplayPoint(point)) {
         return;
       }
 
       let marker;
-
-      if (point.type === 'fauna' || point.type === 'flora' || point.type === 'ecosistema') {
+      if (
+        point.type === 'fauna' ||
+        point.type === 'flora' ||
+        point.type === 'ecosistema'
+      ) {
         const icon = this.getMarkerIcon(point.type);
         marker = L.marker([point.lat, point.lng], { icon });
       } else {
         marker = L.marker([point.lat, point.lng]);
       }
 
-      marker.addTo(this.map!)
-        .on('click', () => {
-          this.showPointDetails(point);
-        });
+      // Crear el contenido del popup
+      const popupContent = `
+        <div class="popup-info">
+          <h3 class="font-bold">${point.title}</h3>
+          <div class="text-sm">${point.type}</div>
+          <button class="directions-btn bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded mt-2 text-sm flex items-center justify-center w-full"
+                 data-lat="${point.lat}"
+                 data-lng="${point.lng}">
+            <i class="fas fa-directions mr-1"></i> Cómo llegar
+          </button>
+        </div>
+      `;
 
-      marker.bindPopup(`<b>${point.title}</b><br>${point.type}`);
+      // Crear el popup con este contenido
+      const popup = L.popup().setContent(popupContent);
+
+      // Asignar el popup al marcador
+      marker.bindPopup(popup);
+
+      marker.on('click', () => {
+        this.showPointDetails(point);
+        this.registerVisit(point.id);
+        this.requestLocationPermission(point);
+      });
+
+      // Manejar el evento de apertura del popup para configurar el botón de direcciones
+      marker.on('popupopen', () => {
+        console.log('Popup abierto para:', point.title);
+
+        // Obtener todos los botones de direcciones dentro del popup y agregar los listeners de clic
+        const directionButtons = document.querySelectorAll('.directions-btn');
+        directionButtons.forEach(btn => {
+          // Asegúrate de que `btn` es un elemento del DOM, no un nodo genérico
+          const buttonElement = btn as HTMLElement; // Type assertion a HTMLElement
+
+          // Eliminar los listeners existentes para evitar duplicados
+          const newBtn = buttonElement.cloneNode(true) as HTMLElement;
+          if (buttonElement.parentNode) {
+            buttonElement.parentNode.replaceChild(newBtn, buttonElement);
+          }
+
+          // Añadir el listener de clic
+          newBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log('Botón de dirección clickeado para:', point.title);
+
+            const lat = parseFloat(newBtn.getAttribute('data-lat') || '0');
+            const lng = parseFloat(newBtn.getAttribute('data-lng') || '0');
+
+            if (lat && lng) {
+              this.getDirections(lat, lng);
+            } else {
+              console.error('Coordenadas inválidas para la ruta');
+            }
+          });
+        });
+      });
 
       this.markers.push(marker);
+      marker.addTo(this.map!);
     });
   }
 
+  requestLocationPermission(point: Point) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+
+          console.log('Ubicación obtenida: ', userLat, userLng);
+
+          this.registerVisit(point.id, userLat, userLng);
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            alert('Se denegó el permiso para acceder a la ubicación.');
+            this.registerVisit(point.id, null);
+          } else {
+            alert('Hubo un problema al obtener la ubicación.');
+          }
+        }
+      );
+    } else {
+      alert('La geolocalización no es compatible con este navegador.');
+      this.registerVisit(point.id, null);
+    }
+  }
+
+  registerVisit(zonaId: number, userLat: number | null = null, userLng: number | null = null) {
+    let ip = null;
+
+    if (userLat === null || userLng === null) {
+      ip = '127.0.0.1';
+    }
+
+    // Registrar la visita con la IP (o ubicación si la obtenemos)
+    this.auditService.registrarVisitaZona(zonaId, ip).subscribe(
+      (response) => {
+        console.log('Visita registrada correctamente', response);
+      },
+      (error) => {
+        console.error('Error al registrar visita', error);
+      }
+    );
+  }
+  getDirections2(destinationLat: number, destinationLng: number, userLat: number, userLng: number) {
+    console.log('Obteniendo direcciones de:', userLat, userLng, 'a', destinationLat, destinationLng);
+
+  }
+
+
   clearMarkers() {
-    this.markers.forEach(marker => {
+    this.markers.forEach((marker) => {
       this.map?.removeLayer(marker);
     });
     this.markers = [];
@@ -174,12 +319,14 @@ export class MapComponent implements OnInit, AfterViewInit {
         break;
       default:
         return L.icon({
-          iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+          iconUrl:
+            'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
           iconSize: [25, 41],
           iconAnchor: [12, 41],
           popupAnchor: [1, -34],
-          shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-          className: `marker-${type}`
+          shadowUrl:
+            'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+          className: `marker-${type}`,
         });
     }
 
@@ -191,14 +338,18 @@ export class MapComponent implements OnInit, AfterViewInit {
         popupAnchor: [1, -34],
       });
     } catch (e) {
-      console.error("Error cargando icono personalizado, usando el icono predeterminado", e);
+      console.error(
+        'Error cargando icono personalizado, usando el icono predeterminado',
+        e
+      );
       return L.icon({
         iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         className: `marker-${type}`,
-        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png'
+        shadowUrl:
+          'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
     }
   }
@@ -207,26 +358,12 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.selectedPoint = point;
     this.showInfoPanel = true;
 
-    // Volar al punto en el mapa
+    console.log('Viajando al punto:', point);
     this.map?.flyTo([point.lat, point.lng], 17, {
-      duration: 1
+      duration: 1,
     });
 
-    const button = `<button id="get-directions" class="btn-directions">Cómo llegar</button>`;
-
-    L.popup()
-      .setLatLng([point.lat, point.lng])
-      .setContent(button)
-      .openOn(this.map!);
-
-    setTimeout(() => {
-      const directionsButton = document.getElementById('get-directions');
-      if (directionsButton) {
-        directionsButton.addEventListener('click', () => {
-          this.getDirections(point.lat, point.lng);
-        });
-      }
-    }, 50);
+    this.map?.closePopup();
 
     setTimeout(() => {
       if (this.infoPanel && this.infoPanel.nativeElement) {
@@ -235,26 +372,235 @@ export class MapComponent implements OnInit, AfterViewInit {
     }, 50);
   }
 
+  // getDirections(destinationLat: number, destinationLng: number) {
+  //   console.log('Obteniendo direcciones a:', destinationLat, destinationLng);
+  //   this.isRouteActive = true;
+
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const userLat = position.coords.latitude;
+  //         const userLng = position.coords.longitude;
+
+  //         if (this.routeControl) {
+  //           this.map?.removeControl(this.routeControl);
+  //         }
+
+  //         // Crear un contenedor personalizado para el control de ruta
+  //         const routeContainer = document.createElement('div');
+  //         routeContainer.className = 'custom-route-container';
+
+  //         // Aplicar estilos personalizados al control de ruta
+  //         // Usar type assertion (as any) para evitar errores de TypeScript con propiedades personalizadas
+  //         this.routeControl = L.Routing.control({
+  //           waypoints: [
+  //             L.latLng(userLat, userLng),
+  //             L.latLng(destinationLat, destinationLng),
+  //           ],
+  //           routeWhileDragging: true,
+  //           lineOptions: {
+  //             styles: [
+  //               { color: '#10b981', opacity: 0.8, weight: 6 },
+  //               { color: '#ffffff', opacity: 0.3, weight: 10 }
+  //             ],
+  //             extendToWaypoints: true,
+  //             missingRouteTolerance: 0
+  //           },
+  //           show: true,
+  //           addWaypoints: false,
+  //           draggableWaypoints: true,
+  //           fitSelectedRoutes: true,
+  //           showAlternatives: false
+  //         } as any).addTo(this.map!);
+
+  //         // Personalizamos los marcadores después de crear el control
+  //         this.routeControl.on('routesfound', (e) => {
+  //           // Eliminar marcadores existentes si los hay
+  //           if (this.map) {
+  //             const existingMarkers = document.querySelectorAll('.custom-route-marker');
+  //             existingMarkers.forEach(marker => {
+  //               marker.parentNode?.removeChild(marker);
+  //             });
+  //           }
+
+  //           // Crear marcadores personalizados en los puntos de inicio y fin
+  //           const startPoint = e.routes[0].coordinates[0];
+  //           const endPoint = e.routes[0].coordinates[e.routes[0].coordinates.length - 1];
+
+  //           // Marcador de inicio
+  //           const startMarkerIcon = L.divIcon({
+  //             className: 'custom-route-marker',
+  //             html: '<div class="route-marker start-marker"></div>',
+  //             iconSize: [20, 20]
+  //           });
+  //           L.marker([startPoint.lat, startPoint.lng], { icon: startMarkerIcon }).addTo(this.map!);
+
+  //           // Marcador de fin
+  //           const endMarkerIcon = L.divIcon({
+  //             className: 'custom-route-marker',
+  //             html: '<div class="route-marker end-marker"></div>',
+  //             iconSize: [20, 20]
+  //           });
+  //           L.marker([endPoint.lat, endPoint.lng], { icon: endMarkerIcon }).addTo(this.map!);
+  //         });
+
+  //         // Agregar clase personalizada al contenedor de rutas
+  //         setTimeout(() => {
+  //           const routeContainer = document.querySelector('.leaflet-routing-container');
+  //           if (routeContainer) {
+  //             this.renderer.addClass(routeContainer, 'enhanced-route');
+
+  //             if (this.darkMode) {
+  //               this.renderer.addClass(routeContainer, 'dark-mode');
+  //             }
+  //           }
+  //         }, 100);
+  //       },
+  //       (error) => {
+  //         this.isRouteActive = false;
+  //         if (error.code === error.PERMISSION_DENIED) {
+  //           alert(
+  //             'No se pudo acceder a tu ubicación. Asegúrate de permitir la geolocalización en tu navegador.'
+  //           );
+  //         } else if (error.code === error.POSITION_UNAVAILABLE) {
+  //           alert('No se pudo determinar tu ubicación.');
+  //         } else if (error.code === error.TIMEOUT) {
+  //           alert(
+  //             'El intento para obtener tu ubicación ha excedido el tiempo de espera.'
+  //           );
+  //         } else {
+  //           alert(
+  //             'Ocurrió un error inesperado al intentar obtener tu ubicación.'
+  //           );
+  //         }
+  //       }
+  //     );
+  //   } else {
+  //     this.isRouteActive = false;
+  //     alert('Geolocalización no soportada por este navegador.');
+  //   }
+  // }
+
+  // Método getDirections mejorado para mejor visualización
   getDirections(destinationLat: number, destinationLng: number) {
+    console.log('Obteniendo direcciones a:', destinationLat, destinationLng);
+    this.isRouteActive = true;
+
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const userLat = position.coords.latitude;
-        const userLng = position.coords.longitude;
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
 
-        if (this.routeControl) {
-          this.map?.removeControl(this.routeControl);
+          if (this.routeControl) {
+            this.map?.removeControl(this.routeControl);
+          }
+
+          // Cerrar cualquier popup abierto
+          this.map?.closePopup();
+
+          // Crear control de ruta con estilos mejorados
+          this.routeControl = L.Routing.control({
+            waypoints: [
+              L.latLng(userLat, userLng),
+              L.latLng(destinationLat, destinationLng),
+            ],
+            routeWhileDragging: true,
+            lineOptions: {
+              styles: [
+                { color: '#10b981', opacity: 0.8, weight: 6 },
+                { color: '#ffffff', opacity: 0.3, weight: 10 },
+              ],
+              extendToWaypoints: true,
+              missingRouteTolerance: 0,
+            },
+            show: true,
+            addWaypoints: false,
+            draggableWaypoints: true,
+            fitSelectedRoutes: true,
+            showAlternatives: false,
+            collapsible: true,
+            createMarker: (i: any, waypoint: any, n: any) => {
+              // Crear marcadores personalizados para inicio y fin
+              const markerOptions = {
+                icon: L.divIcon({
+                  className: i === 0 ? 'start-marker-icon' : 'end-marker-icon',
+                  html: `<div class="route-marker ${
+                    i === 0 ? 'start-marker' : 'end-marker'
+                  }"></div>`,
+                  iconSize: [20, 20],
+                  iconAnchor: [10, 10],
+                }),
+              };
+              return L.marker(waypoint.latLng, markerOptions);
+            },
+          } as any).addTo(this.map!);
+
+          // Personalizar contenedor de ruta después de crearlo
+          this.routeControl.on('routesfound', () => {
+            // Añadir botón de cancelar ruta al panel de instrucciones
+            setTimeout(() => {
+              const routeContainer = document.querySelector(
+                '.leaflet-routing-container'
+              );
+              if (routeContainer) {
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'cancel-route-button';
+                cancelButton.innerHTML =
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Cancelar ruta';
+                cancelButton.onclick = () => this.cancelRoute();
+
+                const summaryContainer = routeContainer.querySelector(
+                  '.leaflet-routing-alt'
+                );
+                if (summaryContainer) {
+                  summaryContainer.parentNode?.insertBefore(
+                    cancelButton,
+                    summaryContainer.nextSibling
+                  );
+                } else {
+                  routeContainer.appendChild(cancelButton);
+                }
+
+                this.renderer.addClass(routeContainer, 'enhanced-route');
+
+                if (this.darkMode) {
+                  this.renderer.addClass(routeContainer, 'dark-mode');
+                }
+              }
+            }, 100);
+          });
+        },
+        (error) => {
+          this.isRouteActive = false;
+          if (error.code === error.PERMISSION_DENIED) {
+            alert(
+              'No se pudo acceder a tu ubicación. Asegúrate de permitir la geolocalización en tu navegador.'
+            );
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            alert('No se pudo determinar tu ubicación.');
+          } else if (error.code === error.TIMEOUT) {
+            alert(
+              'El intento para obtener tu ubicación ha excedido el tiempo de espera.'
+            );
+          } else {
+            alert(
+              'Ocurrió un error inesperado al intentar obtener tu ubicación.'
+            );
+          }
         }
-
-        this.routeControl = L.Routing.control({
-          waypoints: [
-            L.latLng(userLat, userLng),
-            L.latLng(destinationLat, destinationLng)
-          ],
-          routeWhileDragging: true
-        }).addTo(this.map!);
-      });
+      );
     } else {
-      alert("Geolocalización no soportada por el navegador.");
+      this.isRouteActive = false;
+      alert('Geolocalización no soportada por este navegador.');
+    }
+  }
+
+  cancelRoute() {
+    if (this.routeControl) {
+      this.map?.removeControl(this.routeControl);
+      this.routeControl = null;
+      this.isRouteActive = false;
     }
   }
 
@@ -288,6 +634,19 @@ export class MapComponent implements OnInit, AfterViewInit {
     localStorage.setItem('darkMode', this.darkMode ? 'true' : 'false');
 
     this.updateMapStyle();
+
+    if (this.isRouteActive) {
+      const routeContainer = document.querySelector(
+        '.leaflet-routing-container'
+      );
+      if (routeContainer) {
+        if (this.darkMode) {
+          this.renderer.addClass(routeContainer, 'dark-mode');
+        } else {
+          this.renderer.removeClass(routeContainer, 'dark-mode');
+        }
+      }
+    }
   }
 
   updateMapStyle() {
@@ -300,14 +659,19 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
 
     if (this.darkMode) {
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        maxZoom: 19
-      }).addTo(this.map);
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          maxZoom: 19,
+        }
+      ).addTo(this.map);
     } else {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
       }).addTo(this.map);
     }
 
@@ -315,15 +679,17 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   closeInfoPanel() {
-    // Primero removemos la clase visible para activar la animación de salida
     if (this.infoPanel && this.infoPanel.nativeElement) {
       this.renderer.removeClass(this.infoPanel.nativeElement, 'visible');
     }
 
-    // Después de un tiempo para que se complete la animación, ocultamos el panel
     setTimeout(() => {
       this.showInfoPanel = false;
       this.selectedPoint = null;
+
+      if (this.isRouteActive) {
+        this.cancelRoute();
+      }
     }, 300);
   }
 
@@ -336,7 +702,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       fauna: true,
       flora: true,
       ecosistema: true,
-      destacados: false
+      destacados: false,
     };
     this.searchTerm = '';
     this.loadPoints();
@@ -348,14 +714,15 @@ export class MapComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    // Filtrar por destacados
     if (this.activeFilters.destacados && !point.isFavorite) {
       return false;
     }
 
-    // Filtrar por término de búsqueda
-    if (this.searchTerm && !point.title.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-      !point.description.toLowerCase().includes(this.searchTerm.toLowerCase())) {
+    if (
+      this.searchTerm &&
+      !point.title.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+      !point.description.toLowerCase().includes(this.searchTerm.toLowerCase())
+    ) {
       return false;
     }
 
@@ -371,9 +738,9 @@ export class MapComponent implements OnInit, AfterViewInit {
   openARView() {
     if (!this.selectedPoint) return;
 
-    // Aquí se implementaría la apertura de la vista AR
-    alert(`Abriendo vista de Realidad Aumentada para: ${this.selectedPoint.title}`);
-    // En una implementación real, se integraría con una biblioteca AR
+    alert(
+      `Abriendo vista de Realidad Aumentada para: ${this.selectedPoint.title}`
+    );
   }
 
   refreshMap() {

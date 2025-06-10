@@ -1,0 +1,254 @@
+<div class="container  p-6 mx-auto bg-gray-50 max-h-[calc(100vh-10rem)] overflow-scroll">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-center text-indigo-700">Reporte de Zonas Visitadas</h1>
+    <p class="text-center text-gray-600">Sistema de gestión y análisis de visitas</p>
+  </header>
+
+  <!-- Panel de filtros y controles -->
+  <div class="p-6 mb-6 bg-white rounded-lg shadow-md ">
+    <div class="flex flex-wrap items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Filtros y Opciones</h2>
+
+      <!-- Botones de exportación -->
+      <div class="flex space-x-2">
+        <button (click)="exportToCSV()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+          <i class="mr-2 fas fa-file-csv"></i> Exportar CSV
+        </button>
+        <button (click)="exportToPDF()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+          <i class="mr-2 fas fa-file-pdf"></i> Exportar PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Filtro por fecha -->
+      <div class="col-span-1">
+        <label for="startDate" class="block mb-1 text-sm font-medium text-gray-700">Fecha Inicio:</label>
+        <input type="date" id="startDate" [(ngModel)]="startDate" (change)="applyFilters()"
+               class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <div class="col-span-1">
+        <label for="endDate" class="block mb-1 text-sm font-medium text-gray-700">Fecha Fin:</label>
+        <input type="date" id="endDate" [(ngModel)]="endDate" (change)="applyFilters()"
+               class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Filtro por tipo -->
+      <div class="col-span-1">
+        <label for="tipo" class="block mb-1 text-sm font-medium text-gray-700">Tipo de Zona:</label>
+        <select id="tipo" [(ngModel)]="selectedTipo" (change)="applyFilters()"
+                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">Todos</option>
+          <option value="FAUNA">FAUNA</option>
+          <option value="FLORA">FLORA</option>
+        </select>
+      </div>
+
+      <!-- Búsqueda -->
+      <div class="col-span-1">
+        <label for="search" class="block mb-1 text-sm font-medium text-gray-700">Buscar:</label>
+        <input type="text" id="search" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Buscar en zonas..."
+               class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+    </div>
+
+    <!-- Opciones de visualización -->
+    <div class="flex flex-wrap items-center justify-between mt-6">
+      <div class="flex items-center space-x-4">
+        <span class="text-sm font-medium text-gray-700">Vista:</span>
+        <button (click)="changeViewMode('cards')" [class.bg-indigo-600]="viewMode === 'cards'" [class.text-white]="viewMode === 'cards'"
+                class="px-3 py-1 text-sm font-medium border border-gray-300 rounded-md hover:bg-indigo-100">
+          <i class="mr-1 fas fa-th"></i> Tarjetas
+        </button>
+        <button (click)="changeViewMode('table')" [class.bg-indigo-600]="viewMode === 'table'" [class.text-white]="viewMode === 'table'"
+                class="px-3 py-1 text-sm font-medium border border-gray-300 rounded-md hover:bg-indigo-100">
+          <i class="mr-1 fas fa-table"></i> Tabla
+        </button>
+      </div>
+
+      <div class="flex items-center">
+        <span class="mr-2 text-sm font-medium text-gray-700">Resultados: </span>
+        <span class="px-2 py-1 text-sm font-semibold text-indigo-700 bg-indigo-100 rounded-md">{{ totalVisitas }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de estadísticas -->
+  <div class="p-6 mb-6 bg-white rounded-lg shadow-md">
+    <h2 class="mb-4 text-xl font-semibold text-gray-800">Estadísticas</h2>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <!-- Estadísticas por tipo -->
+      <div class="p-4 rounded-lg bg-gray-50">
+        <h3 class="mb-2 text-lg font-medium text-gray-700">Visitas por Tipo</h3>
+        <div class="space-y-2">
+          <div *ngFor="let tipo of visitasPorTipo | keyvalue" class="flex items-center justify-between">
+            <span class="font-medium">{{ tipo.key }}</span>
+            <div class="flex items-center">
+              <div class="w-32 h-3 mr-2 overflow-hidden bg-gray-200 rounded-full">
+                <div class="h-full bg-indigo-600"
+                     [style.width.%]="(tipo.value / totalVisitas) * 100"></div>
+              </div>
+              <span class="text-sm font-semibold">{{ tipo.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas por usuario -->
+      <div class="p-4 rounded-lg bg-gray-50">
+        <h3 class="mb-2 text-lg font-medium text-gray-700">Visitas por Usuario</h3>
+        <div class="space-y-2">
+          <div *ngFor="let usuario of visitasPorUsuario | keyvalue" class="flex items-center justify-between">
+            <span class="font-medium">{{ usuario.key }}</span>
+            <div class="flex items-center">
+              <div class="w-32 h-3 mr-2 overflow-hidden bg-gray-200 rounded-full">
+                <div class="h-full bg-green-600"
+                     [style.width.%]="(usuario.value / totalVisitas) * 100"></div>
+              </div>
+              <span class="text-sm font-semibold">{{ usuario.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de tarjetas -->
+  <div *ngIf="viewMode === 'cards'" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div *ngFor="let item of paginatedItems" class="overflow-hidden transition-shadow bg-white rounded-lg shadow-lg hover:shadow-xl">
+      <div class="h-40 overflow-hidden bg-gray-200">
+        <img *ngIf="item.zona.imagenes && item.zona.imagenes.length > 0" [src]="item.zona.imagenes[0]"
+             alt="Imagen de la zona" class="object-cover w-full h-full">
+        <div *ngIf="!item.zona.imagenes || item.zona.imagenes.length === 0"
+             class="flex items-center justify-center w-full h-full text-gray-400">
+          <i class="text-4xl fas fa-image"></i>
+        </div>
+      </div>
+
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xl font-semibold text-indigo-700">{{ item.zona.nombre }}</h3>
+          <span [ngClass]="{
+            'bg-blue-100 text-blue-800': item.zona.tipo === 'FAUNA',
+            'bg-green-100 text-green-800': item.zona.tipo === 'FLORA'
+          }" class="px-2 py-1 text-xs font-bold uppercase rounded">
+            {{ item.zona.tipo }}
+          </span>
+        </div>
+
+        <p class="mb-4 text-sm text-gray-600 line-clamp-2">{{ item.zona.descripcion }}</p>
+
+        <div class="pt-4 mt-4 border-t border-gray-200">
+          <div class="flex items-center mb-2">
+            <i class="mr-2 text-gray-500 fas fa-user"></i>
+            <span class="text-sm text-gray-700">{{ item.log.username }}</span>
+          </div>
+
+          <div class="flex items-center mb-2">
+            <i class="mr-2 text-gray-500 fas fa-tasks"></i>
+            <span class="text-sm text-gray-700">{{ item.log.action }}</span>
+          </div>
+
+          <div class="flex items-center">
+            <i class="mr-2 text-gray-500 fas fa-calendar"></i>
+            <span class="text-sm text-gray-700">{{ item.log.timestamp | date:'medium' }}</span>
+          </div>
+        </div>
+
+        <button class="w-full px-4 py-2 mt-4 text-sm font-medium text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700">
+          Ver detalles
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de tabla -->
+  <div *ngIf="viewMode === 'table'" class="overflow-hidden bg-white rounded-lg shadow">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th (click)="changeSorting('nombre')" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer hover:bg-gray-100">
+            Nombre
+            <i *ngIf="sortField === 'nombre'"
+               [class]="sortDirection === 'asc' ? 'fas fa-sort-up ml-1' : 'fas fa-sort-down ml-1'"></i>
+          </th>
+          <th (click)="changeSorting('tipo')" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer hover:bg-gray-100">
+            Tipo
+            <i *ngIf="sortField === 'tipo'"
+               [class]="sortDirection === 'asc' ? 'fas fa-sort-up ml-1' : 'fas fa-sort-down ml-1'"></i>
+          </th>
+          <th (click)="changeSorting('username')" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer hover:bg-gray-100">
+            Usuario
+            <i *ngIf="sortField === 'username'"
+               [class]="sortDirection === 'asc' ? 'fas fa-sort-up ml-1' : 'fas fa-sort-down ml-1'"></i>
+          </th>
+          <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+            Acción
+          </th>
+          <th (click)="changeSorting('timestamp')" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer hover:bg-gray-100">
+            Fecha
+            <i *ngIf="sortField === 'timestamp'"
+               [class]="sortDirection === 'asc' ? 'fas fa-sort-up ml-1' : 'fas fa-sort-down ml-1'"></i>
+          </th>
+          <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+            Acciones
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let item of paginatedItems" class="transition-colors hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="font-medium text-gray-900">{{ item.zona.nombre }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span [ngClass]="{
+              'bg-blue-100 text-blue-800': item.zona.tipo === 'FAUNA',
+              'bg-green-100 text-green-800': item.zona.tipo === 'FLORA'
+            }" class="inline-flex px-2 py-1 text-xs font-semibold leading-5 rounded-full">
+              {{ item.zona.tipo }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">{{ item.log.username }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">{{ item.log.action }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-500">{{ item.log.timestamp | date:'short' }}</div>
+          </td>
+          <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+            <button class="font-medium text-indigo-600 hover:text-indigo-900">Ver detalles</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div *ngIf="totalPages > 1" class="flex items-center justify-center mt-6">
+    <nav class="inline-flex rounded-md shadow-sm" aria-label="Paginación">
+      <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
+              class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50"
+              [class.opacity-50]="currentPage === 1" [class.cursor-not-allowed]="currentPage === 1">
+        Anterior
+      </button>
+
+      <button *ngFor="let page of pages" (click)="currentPage = page"
+              [class.bg-indigo-600]="currentPage === page"
+              [class.text-white]="currentPage === page"
+              class="px-3 py-2 text-sm font-medium border border-gray-300 hover:bg-gray-50">
+        {{ page }}
+      </button>
+
+      <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
+              class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50"
+              [class.opacity-50]="currentPage === totalPages" [class.cursor-not-allowed]="currentPage === totalPages">
+        Siguiente
+      </button>
+    </nav>
+  </div>
+</div>

@@ -1,0 +1,186 @@
+<div
+  *ngIf="currentUser"
+  class="w-full mx-auto transition-all duration-300 max-w-7xl rounded-xl"
+  [ngClass]="{
+    'bg-white shadow-xl': !darkMode,
+    'bg-gray-800 text-gray-200 shadow-2xl shadow-gray-900/30': darkMode
+  }"
+>
+  <!-- Header section with background hero -->
+  <div class="relative">
+    <!-- Banner background -->
+    <div class="h-48 overflow-hidden rounded-t-xl">
+      <div
+        class="w-full h-full bg-gradient-to-r from-green-400 to-blue-500 opacity-90"
+      ></div>
+    </div>
+
+    <!-- Profile section that overlaps banner -->
+    <div class="px-8">
+      <div class="relative flex items-end mb-4 -mt-16">
+        <!-- Avatar circle -->
+        <div class="flex-shrink-0">
+          <div
+            class="flex items-center justify-center w-32 h-32 text-4xl font-bold text-white uppercase rounded-full shadow-lg !bg-gradient-to-br from-green-700 to-green-500 ring-4 ring-gray-800"
+            [ngClass]="{
+              'bg-gradient-to-br from-green-500 to-green-700 ring-gray-800':
+                darkMode
+            }"
+          >
+            {{ currentUser.username?.[0] || '?' }}
+          </div>
+        </div>
+
+        <!-- User name and role badge -->
+        <div class="pb-4 ml-6">
+          <h2
+            class="text-3xl font-bold"
+            [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }"
+          >
+            {{ currentUser.username || "Invitado" }}
+          </h2>
+          <div class="mt-1">
+            <span
+              class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full shadow-sm"
+              [ngClass]="{
+                'bg-green-100 text-green-800':
+                  currentUser?.role === 'USER' && !darkMode,
+                'bg-green-800 text-green-200':
+                  currentUser?.role === 'USER' && darkMode,
+                'bg-blue-100 text-blue-800':
+                  currentUser?.role === 'ADMIN' && !darkMode,
+                'bg-blue-800 text-blue-200':
+                  currentUser?.role === 'ADMIN' && darkMode,
+                'bg-gray-100 text-gray-800': !currentUser?.role && !darkMode,
+                'bg-gray-700 text-gray-200': !currentUser?.role && darkMode
+              }"
+            >
+              {{ currentUser?.role || "Invitado" }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Edit button (right aligned) -->
+        <div class="pb-4 ml-auto">
+          <button
+            (click)="toggleEditMode()"
+            class="px-5 py-2 text-sm font-medium transition-all duration-200 transform rounded-lg shadow-sm hover:scale-105"
+            [ngClass]="{
+              'bg-white text-green-700 hover:bg-green-50 hover:text-green-800':
+                !darkMode,
+              'bg-gray-700 text-green-400 hover:bg-gray-600': darkMode
+            }"
+          >
+            {{ editMode ? "Cancelar" : "Editar Perfil" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="p-8">
+    <!-- User info cards -->
+    <div class="mb-10">
+      <h3
+        class="mb-6 text-xl font-semibold"
+        [ngClass]="{ 'text-gray-700': !darkMode, 'text-green-400': darkMode }"
+      >
+        Información Personal
+      </h3>
+
+      <!-- View mode -->
+      <div *ngIf="!editMode" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Email card -->
+        <div
+          class="p-6 transition-all rounded-lg"
+          [ngClass]="{
+            'bg-gray-50 hover:bg-gray-100': !darkMode,
+            'bg-gray-700 hover:bg-gray-650': darkMode
+          }"
+        >
+          <div class="flex items-center mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 mr-2"
+              [ngClass]="{
+                'text-green-600': !darkMode,
+                'text-green-400': darkMode
+              }"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            <h4
+              class="font-medium"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-300': darkMode
+              }"
+            >
+              Correo electrónico
+            </h4>
+          </div>
+          <p
+            class="text-lg font-medium"
+            [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }"
+          >
+            {{ currentUser?.email || "No disponible" }}
+          </p>
+        </div>
+
+        <!-- User ID card -->
+        <div
+          class="p-6 transition-all rounded-lg"
+          [ngClass]="{
+            'bg-gray-50 hover:bg-gray-100': !darkMode,
+            'bg-gray-700 hover:bg-gray-650': darkMode
+          }"
+        >
+          <div class="flex items-center mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 mr-2"
+              [ngClass]="{
+                'text-green-600': !darkMode,
+                'text-green-400': darkMode
+              }"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+              />
+            </svg>
+            <h4
+              class="font-medium"
+              [ngClass]="{
+                'text-gray-500': !darkMode,
+                'text-gray-300': darkMode
+              }"
+            >
+              ID de usuario
+            </h4>
+          </div>
+          <p
+            class="font-mono text-lg font-medium"
+            [ngClass]="{ 'text-gray-800': !darkMode, 'text-white': darkMode }"
+          >
+            {{ currentUser?.id || "No disponible" }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

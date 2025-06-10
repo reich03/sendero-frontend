@@ -80,7 +80,7 @@ export class MarkersComponent implements OnInit {
     }
   }
 
-  private getEmptyMarker(): Point {
+  public getEmptyMarker(): Point {
     return {
       id: 0,
       title: '',
